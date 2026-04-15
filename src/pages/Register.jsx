@@ -2,8 +2,10 @@ import { useState, useMemo } from "react";
 import { api } from "../services/api";
 
 export default function Register({ goToLogin }) {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
@@ -13,18 +15,25 @@ export default function Register({ goToLogin }) {
     { label: "Pelo menos uma letra maiúscula", met: /[A-Z]/.test(password) },
     { label: "Pelo menos um número", met: /[0-9]/.test(password) },
     { label: "Pelo menos um caractere especial (!@#$%^&*)", met: /[!@#$%^&*(),.?":{}|<>]/.test(password) },
-  ], [password]);
+    { label: "As senhas devem coincidir", met: password === confirmPassword && password.length > 0 },
+  ], [password, confirmPassword]);
 
   const isPasswordValid = requirements.every(req => req.met);
+  const doPasswordsMatch = password === confirmPassword && password.length > 0;
 
   const handleRegister = async () => {
     if (!isPasswordValid) {
         setMessage("A senha não atende a todos os requisitos.");
         return;
     }
+    if (!doPasswordsMatch) {
+        setMessage("As senhas não coincidem.");
+        return;
+    }
 
     try {
-      await api.post("/register", { email, password });
+      await api.post("/register", { email, password, name });
+      
       setMessage("Conta criada com sucesso!");
       setTimeout(() => {
         goToLogin();
@@ -41,21 +50,58 @@ export default function Register({ goToLogin }) {
         <h2 style={{ textAlign: "center", marginBottom: "20px" }}>Criar Nova Conta</h2>
 
         <div style={styles.inputGroup}>
-            <label style={styles.label}>E-mail</label>
+            <label style={{...styles.label, textAlign: "left"}}>Nome Completo</label>
+            <input
+            placeholder="Digite seu nome completo"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            style={styles.input}
+            />
+        </div>
+
+        <div style={styles.inputGroup}>
+            <label style={{...styles.label, textAlign: "left"}}>E-mail</label>
             <input
             placeholder="Digite seu email"
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
             style={styles.input}
             />
         </div>
 
         <div style={styles.inputGroup}>
-            <label style={styles.label}>Senha</label>
+            <label style={{...styles.label, textAlign: "left"}}>Senha</label>
             <div style={styles.passwordWrapper}>
                 <input
                     placeholder="Crie uma senha forte"
                     type={showPassword ? "text" : "password"}
                     onChange={(e) => setPassword(e.target.value)}
+                    style={styles.passwordInput}
+                />
+                <button 
+                   onClick={() => setShowPassword(!showPassword)} 
+                   style={styles.toggleBtn}
+                   type="button"
+                >
+                   {showPassword ? (
+                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                   ) : (
+                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 2.56-4.6M8.06 8.06A10.12 10.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                   )}
+                </button>
+            </div>
+        </div>
+
+        <div style={styles.inputGroup}>
+            <label style={{...styles.label, textAlign: "left"}}>Confirmar Senha</label>
+            <div style={styles.passwordWrapper}>
+                <input
+                    placeholder="Digite a senha novamente"
+                    type={showPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onPaste={(e) => e.preventDefault()}
+                    onCopy={(e) => e.preventDefault()}
                     style={styles.passwordInput}
                 />
                 <button 
@@ -96,11 +142,11 @@ export default function Register({ goToLogin }) {
 
         <button 
             onClick={handleRegister} 
-            disabled={!isPasswordValid || !email}
+            disabled={!isPasswordValid || !email || !name || !doPasswordsMatch}
             style={{ 
                 ...styles.button, 
-                opacity: (isPasswordValid && email) ? 1 : 0.5,
-                cursor: (isPasswordValid && email) ? "pointer" : "not-allowed"
+                opacity: (isPasswordValid && email && name && doPasswordsMatch) ? 1 : 0.5,
+                cursor: (isPasswordValid && email && name && doPasswordsMatch) ? "pointer" : "not-allowed"
             }}
         >
           Finalizar Cadastro

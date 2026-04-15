@@ -1,4 +1,4 @@
-export default function Navbar({ currentView, setView, handleLogout }) {
+export default function Navbar({ currentView, setView, handleLogout, userProfile }) {
   return (
     <nav style={styles.nav}>
       <div style={styles.logo} onClick={() => setView("main")}>
@@ -6,27 +6,19 @@ export default function Navbar({ currentView, setView, handleLogout }) {
       </div>
 
       <div style={styles.links}>
-        <button 
-          onClick={() => setView("main")} 
-          style={currentView === "main" ? styles.activeLink : styles.link}
-        >
-          Vagas
-        </button>
-        <button 
-          onClick={() => setView("favorites")} 
-          style={currentView === "favorites" ? styles.activeLink : styles.link}
-        >
-          Favoritos
-        </button>
-        <button 
-          onClick={() => setView("dashboard")} 
-          style={currentView === "dashboard" ? styles.activeLink : styles.link}
-        >
-          Dashboard
-        </button>
+        {/* Links moved to Sidebar */}
       </div>
 
       <div style={styles.actions}>
+        {userProfile?.initials && (
+          <div 
+            onClick={() => setView("profile")} 
+            style={styles.avatarNav}
+            title="Ir para o Perfil"
+          >
+            {userProfile.initials}
+          </div>
+        )}
         <button onClick={handleLogout} style={styles.logoutBtn}>
           Sair
         </button>
@@ -56,6 +48,11 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: "10px"
+  },
+  actions: {
+    display: "flex",
+    alignItems: "center",
+    gap: "15px"
   },
   links: {
     display: "flex",
@@ -91,5 +88,19 @@ const styles = {
     borderRadius: "8px",
     cursor: "pointer",
     fontWeight: "bold"
+  },
+  avatarNav: {
+    width: "40px",
+    height: "40px",
+    borderRadius: "50%",
+    background: "#38bdf8",
+    color: "#0f172a",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontWeight: "bold",
+    cursor: "pointer",
+    fontSize: "16px",
+    transition: "0.2s"
   }
 };
