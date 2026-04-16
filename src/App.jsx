@@ -10,6 +10,7 @@ import Favorites from "./pages/Favorites";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import ForgotPassword from "./pages/ForgotPassword";
+import ResetPasswordWithToken from "./pages/ResetPasswordWithToken";
 
 const JOBS_PER_PAGE = 9;
 
@@ -24,6 +25,7 @@ export default function App() {
   const [userProfile, setUserProfile] = useState({ name: '', email: '', birthDate: '', initials: '' });
   const [searchTerm, setSearchTerm] = useState("");
   const [searchTimeout, setSearchTimeout] = useState(null);
+  const [recoveryToken, setRecoveryToken] = useState(null);
 
   const loadUserProfile = async () => {
     try {
@@ -46,6 +48,19 @@ export default function App() {
   };
 
   useEffect(() => {
+    // Check for Supabase Auth hash routing
+    const hashStr = window.location.hash;
+    if (hashStr && hashStr.includes("type=recovery") && hashStr.includes("access_token=")) {
+      const params = new URLSearchParams(hashStr.substring(1));
+      const accessToken = params.get("access_token");
+      if (accessToken) {
+        setRecoveryToken(accessToken);
+        setView("reset-password-with-token");
+        window.history.replaceState(null, "", window.location.pathname);
+        return;
+      }
+    }
+
     if (token) {
       if (view === "login" || view === "register" || view === "forgot-password") {
         setView("main");
@@ -115,6 +130,10 @@ export default function App() {
 
   if (view === "forgot-password") {
     return <ForgotPassword goToLogin={() => setView("login")} />;
+  }
+
+  if (view === "reset-password-with-token") {
+    return <ResetPasswordWithToken recoveryToken={recoveryToken} goToLogin={() => setView("login")} />;
   }
 
 // New layout wrapping for main authenticated area
