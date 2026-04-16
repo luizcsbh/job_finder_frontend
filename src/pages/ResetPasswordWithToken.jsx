@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { api } from "../services/api";
 import PasswordInput from "../components/PasswordInput";
+import Button from "../components/Button";
 
 export default function ResetPasswordWithToken({ recoveryToken, goToLogin }) {
   const [newPassword, setNewPassword] = useState("");
@@ -91,17 +92,18 @@ export default function ResetPasswordWithToken({ recoveryToken, goToLogin }) {
             </p>
         )}
 
-        <button 
+        <Button 
             onClick={handleUpdate} 
             disabled={loading || !isPasswordValid || !doPasswordsMatch}
+            loading={loading}
             style={{ 
                 ...styles.button, 
                 opacity: (!loading && isPasswordValid && doPasswordsMatch) ? 1 : 0.5,
                 cursor: (!loading && isPasswordValid && doPasswordsMatch) ? "pointer" : "not-allowed"
             }}
         >
-          {loading ? "Redefinindo..." : "Salvar e Continuar"}
-        </button>
+          Salvar e Continuar
+        </Button>
 
         <p style={{ textAlign: "center", fontSize: "14px", marginTop: "20px" }}>
           Lembrou a senha da forma divina?{" "}

@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { api } from "../services/api";
 import PasswordInput from "../components/PasswordInput";
+import Button from "../components/Button";
 
 export default function Login({ setToken, goToRegister, goToForgotPassword }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleLogin = async () => {
+    setLoading(true);
     try {
       const res = await api.post("/login", { email, password });
       localStorage.setItem("token", res.data.token);
@@ -15,6 +18,8 @@ export default function Login({ setToken, goToRegister, goToForgotPassword }) {
     } catch (err) {
       const errorMsg = err.response?.data?.detail || "Credenciais inválidas";
       setError(errorMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -43,9 +48,13 @@ export default function Login({ setToken, goToRegister, goToForgotPassword }) {
 
         {error && <p style={styles.error}>{error}</p>}
 
-        <button onClick={handleLogin} style={styles.button}>
+        <Button 
+          onClick={handleLogin} 
+          style={styles.button}
+          loading={loading}
+        >
           Entrar no Sistema
-        </button>
+        </Button>
 
         <div style={{ marginTop: "25px", textAlign: "center", fontSize: "14px" }}>
             <p>

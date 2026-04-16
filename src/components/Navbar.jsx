@@ -1,3 +1,5 @@
+import Button from "./Button";
+
 export default function Navbar({ currentView, setView, handleLogout, userProfile }) {
   return (
     <nav style={styles.nav}>
@@ -19,9 +21,9 @@ export default function Navbar({ currentView, setView, handleLogout, userProfile
             {userProfile.initials}
           </div>
         )}
-        <button onClick={handleLogout} style={styles.logoutBtn}>
+        <Button onClick={handleLogout} style={styles.logoutBtn}>
           Sair
-        </button>
+        </Button>
       </div>
     </nav>
   );

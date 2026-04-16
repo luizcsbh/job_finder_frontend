@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { api } from "../services/api";
+import Button from "../components/Button";
 
 export default function ForgotPassword({ goToLogin }) {
   const [email, setEmail] = useState("");
@@ -53,17 +54,18 @@ export default function ForgotPassword({ goToLogin }) {
           </p>
         )}
 
-        <button 
+        <Button 
           onClick={handleReset} 
           disabled={loading || !email}
+          loading={loading}
           style={{
             ...styles.button,
             opacity: (!loading && email) ? 1 : 0.6,
             cursor: (!loading && email) ? "pointer" : "not-allowed"
           }}
         >
-          {loading ? "Enviando..." : "Enviar Link de Recuperação"}
-        </button>
+          Enviar Link de Recuperação
+        </Button>
 
         <p style={{ textAlign: "center", fontSize: "14px", marginTop: "20px" }}>
           Lembrou a senha?{" "}

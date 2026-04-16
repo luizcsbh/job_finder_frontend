@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { api } from "../services/api";
+import Button from "./Button";
 
 export default function JobCard({ job, isFavorite, onFavoriteToggle }) {
   const [toggling, setToggling] = useState(false);
@@ -43,13 +43,13 @@ export default function JobCard({ job, isFavorite, onFavoriteToggle }) {
       {/* Header */}
       <div style={styles.header}>
         <h3 style={styles.title}>{job.title}</h3>
-        <button
+        <Button
           onClick={toggleFavorite}
-          disabled={toggling}
+          loading={toggling}
           style={{ ...styles.favBtn, color: isFavorite ? "#ef4444" : "#94a3b8" }}
         >
-          {isFavorite ? "❤️" : "🤍"}
-        </button>
+          {!toggling && (isFavorite ? "❤️" : "🤍")}
+        </Button>
       </div>
 
       <p style={styles.company}>{job.company}</p>

@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { api } from '../services/api';
+import PasswordInput from '../components/PasswordInput';
+import Button from '../components/Button';
 
 export default function Profile({ userProfile, setUserProfile }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -13,8 +15,9 @@ export default function Profile({ userProfile, setUserProfile }) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [pwMessage, setPwMessage] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [isUpdatingPw, setIsUpdatingPw] = useState(false);
 
   const pwRequirements = useMemo(() => [
     { label: "Mínimo de 8 caracteres", met: newPassword.length >= 8 },
@@ -38,6 +41,7 @@ export default function Profile({ userProfile, setUserProfile }) {
   }, [userProfile]);
 
   const handleSave = async () => {
+    setIsSaving(true);
     try {
       await api.put('/profile', { 
         name: formData.name, 
@@ -61,7 +65,8 @@ export default function Profile({ userProfile, setUserProfile }) {
       setIsEditing(false);
     } catch (err) {
       console.error("Erro ao salvar perfil", err);
-      // Optional: add UI error toast or message here in the future
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -75,6 +80,7 @@ export default function Profile({ userProfile, setUserProfile }) {
       return;
     }
     
+    setIsUpdatingPw(true);
     try {
       await api.post('/reset-password', {
         current_password: currentPassword,
@@ -84,11 +90,12 @@ export default function Profile({ userProfile, setUserProfile }) {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      setShowPassword(false);
       setTimeout(() => setPwMessage(""), 3000);
     } catch (err) {
       const errorMsg = err.response?.data?.detail || "Erro ao alterar a senha";
       setPwMessage(errorMsg);
+    } finally {
+      setIsUpdatingPw(false);
     }
   };
 
@@ -144,11 +151,17 @@ export default function Profile({ userProfile, setUserProfile }) {
         
         {isEditing ? (
           <div style={styles.actionButtons}>
-            <button style={styles.cancelBtn} onClick={() => setIsEditing(false)}>Cancelar</button>
-            <button style={styles.saveBtn} onClick={handleSave}>Salvar Alterações</button>
+            <Button style={styles.cancelBtn} onClick={() => setIsEditing(false)}>Cancelar</Button>
+            <Button 
+                style={styles.saveBtn} 
+                onClick={handleSave}
+                loading={isSaving}
+            >
+                Salvar Alterações
+            </Button>
           </div>
         ) : (
-          <button style={styles.editBtn} onClick={() => setIsEditing(true)}>Editar Perfil</button>
+          <Button style={styles.editBtn} onClick={() => setIsEditing(true)}>Editar Perfil</Button>
         )}
       </div>
 
@@ -157,64 +170,34 @@ export default function Profile({ userProfile, setUserProfile }) {
 
         <div style={styles.infoGroup}>
             <label style={styles.label}>Senha Atual</label>
-            <div style={styles.passwordWrapper}>
-                <input
-                    placeholder="Digite sua senha atual"
-                    type={showPassword ? "text" : "password"}
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    style={styles.passwordInput}
-                />
-                <button onClick={() => setShowPassword(!showPassword)} style={styles.toggleBtn} type="button">
-                   {showPassword ? (
-                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                   ) : (
-                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 2.56-4.6M8.06 8.06A10.12 10.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                   )}
-                </button>
-            </div>
+            <PasswordInput
+                placeholder="Digite sua senha atual"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                inputStyle={{ background: "#1e293b" }}
+            />
         </div>
 
         <div style={styles.infoGroup}>
             <label style={styles.label}>Nova Senha</label>
-            <div style={styles.passwordWrapper}>
-                <input
-                    placeholder="Crie uma nova senha forte"
-                    type={showPassword ? "text" : "password"}
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    style={styles.passwordInput}
-                />
-                <button onClick={() => setShowPassword(!showPassword)} style={styles.toggleBtn} type="button">
-                   {showPassword ? (
-                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                   ) : (
-                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 2.56-4.6M8.06 8.06A10.12 10.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                   )}
-                </button>
-            </div>
+            <PasswordInput
+                placeholder="Crie uma nova senha forte"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                inputStyle={{ background: "#1e293b" }}
+            />
         </div>
 
         <div style={styles.infoGroup}>
             <label style={styles.label}>Confirmar Nova Senha</label>
-            <div style={styles.passwordWrapper}>
-                <input
-                    placeholder="Digite a nova senha novamente"
-                    type={showPassword ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    onPaste={(e) => e.preventDefault()}
-                    onCopy={(e) => e.preventDefault()}
-                    style={styles.passwordInput}
-                />
-                <button onClick={() => setShowPassword(!showPassword)} style={styles.toggleBtn} type="button">
-                   {showPassword ? (
-                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                   ) : (
-                       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 2.56-4.6M8.06 8.06A10.12 10.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-                   )}
-                </button>
-            </div>
+            <PasswordInput
+                placeholder="Digite a nova senha novamente"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                onPaste={(e) => e.preventDefault()}
+                onCopy={(e) => e.preventDefault()}
+                inputStyle={{ background: "#1e293b" }}
+            />
         </div>
 
         <div style={styles.checklist}>
@@ -232,17 +215,18 @@ export default function Profile({ userProfile, setUserProfile }) {
             </p>
         )}
 
-        <button 
+        <Button 
             onClick={handleUpdatePassword} 
-            disabled={!currentPassword || !isPasswordValid || !doPasswordsMatch}
+            disabled={!currentPassword || !isPasswordValid || !doPasswordsMatch || isUpdatingPw}
+            loading={isUpdatingPw}
             style={{ 
                 ...styles.updatePwBtn, 
-                opacity: (currentPassword && isPasswordValid && doPasswordsMatch) ? 1 : 0.5,
-                cursor: (currentPassword && isPasswordValid && doPasswordsMatch) ? "pointer" : "not-allowed"
+                opacity: (currentPassword && isPasswordValid && doPasswordsMatch && !isUpdatingPw) ? 1 : 0.5,
+                cursor: (currentPassword && isPasswordValid && doPasswordsMatch && !isUpdatingPw) ? "pointer" : "not-allowed"
             }}
         >
           Atualizar Senha
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -354,35 +338,7 @@ const styles = {
     flex: 1,
     fontSize: "16px"
   },
-  passwordWrapper: {
-    position: "relative",
-    display: "flex",
-    alignItems: "center"
-  },
-  passwordInput: {
-    width: "100%",
-    padding: "10px",
-    paddingRight: "45px",
-    borderRadius: "6px",
-    border: "1px solid #334155",
-    background: "#1e293b",
-    color: "#fff",
-    fontSize: "16px",
-    outline: "none"
-  },
-  toggleBtn: {
-    position: "absolute",
-    right: "12px",
-    background: "none",
-    border: "none",
-    padding: 0,
-    cursor: "pointer",
-    color: "#94a3b8",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    transition: "color 0.2s"
-  },
+
   checklist: {
     margin: "0 0 20px 0",
     fontSize: "13px",

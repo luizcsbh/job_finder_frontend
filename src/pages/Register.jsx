@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { api } from "../services/api";
 import PasswordInput from "../components/PasswordInput";
+import Button from "../components/Button";
 
 export default function Register({ goToLogin }) {
   const [name, setName] = useState("");
@@ -8,6 +9,7 @@ export default function Register({ goToLogin }) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // Password validation logic
   const requirements = useMemo(() => [
@@ -31,6 +33,7 @@ export default function Register({ goToLogin }) {
         return;
     }
 
+    setLoading(true);
     try {
       await api.post("/register", { email, password, name });
       
@@ -41,6 +44,8 @@ export default function Register({ goToLogin }) {
     } catch (err) {
       const errorMsg = err.response?.data?.detail || "Erro ao criar conta";
       setMessage(errorMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -111,17 +116,18 @@ export default function Register({ goToLogin }) {
             </p>
         )}
 
-        <button 
+        <Button 
             onClick={handleRegister} 
             disabled={!isPasswordValid || !email || !name || !doPasswordsMatch}
+            loading={loading}
             style={{ 
                 ...styles.button, 
-                opacity: (isPasswordValid && email && name && doPasswordsMatch) ? 1 : 0.5,
-                cursor: (isPasswordValid && email && name && doPasswordsMatch) ? "pointer" : "not-allowed"
+                opacity: (isPasswordValid && email && name && doPasswordsMatch && !loading) ? 1 : 0.5,
+                cursor: (isPasswordValid && email && name && doPasswordsMatch && !loading) ? "pointer" : "not-allowed"
             }}
         >
           Finalizar Cadastro
-        </button>
+        </Button>
 
         <p style={{ textAlign: "center", fontSize: "14px", marginTop: "20px" }}>
           Já tem conta?{" "}

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
+import Button from "../components/Button";
 
 export default function Dashboard({ onRefresh }) {
   const [profile, setProfile] = useState(null);
@@ -112,15 +113,20 @@ export default function Dashboard({ onRefresh }) {
          <div style={styles.card}>
             <h3>📄 Gerenciar Currículo</h3>
             <input type="file" accept=".pdf" onChange={handleFileChange} style={styles.fileInput} />
-            <button onClick={handleUpload} disabled={loading} style={styles.uploadBtn}>
-                {loading ? "Processando..." : "Atualizar Currículo"}
-            </button>
+            <Button 
+                onClick={handleUpload} 
+                disabled={loading} 
+                style={styles.uploadBtn}
+                loading={loading}
+            >
+                Atualizar Currículo
+            </Button>
 
             {profile?.has_resume && (
-              <button onClick={handleDownload} style={styles.downloadBtn}>
+              <Button onClick={handleDownload} style={styles.downloadBtn}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: "8px"}}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 Baixar Meu Currículo
-              </button>
+              </Button>
             )}
 
             {message && (
