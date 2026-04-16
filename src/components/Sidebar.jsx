@@ -1,4 +1,4 @@
-export default function Sidebar({ currentView, setView }) {
+export default function Sidebar({ currentView, setView, isAdmin }) {
   return (
     <aside style={styles.sidebar}>
       <div style={styles.menu}>
@@ -26,6 +26,15 @@ export default function Sidebar({ currentView, setView }) {
         >
           👤 Perfil
         </button>
+
+        {isAdmin && (
+          <button 
+            onClick={() => setView("admin")} 
+            style={currentView === "admin" ? styles.activePrivilegedLink : styles.privilegedLink}
+          >
+            🛡️ Painel Admin
+          </button>
+        )}
       </div>
     </aside>
   );
@@ -75,5 +84,34 @@ const styles = {
     display: "flex",
     alignItems: "center",
     gap: "10px",
+  },
+  privilegedLink: {
+    padding: "12px 15px",
+    background: "rgba(56, 189, 248, 0.1)",
+    color: "#38bdf8",
+    border: "1px solid rgba(56, 189, 248, 0.2)",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontWeight: "600",
+    textAlign: "left",
+    transition: "0.2s",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    marginTop: "20px"
+  },
+  activePrivilegedLink: {
+    padding: "12px 15px",
+    background: "#38bdf8",
+    color: "#0f172a",
+    border: "1px solid #38bdf8",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontWeight: "bold",
+    textAlign: "left",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    marginTop: "20px"
   }
 };

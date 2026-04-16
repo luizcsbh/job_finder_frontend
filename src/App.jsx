@@ -11,6 +11,7 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPasswordWithToken from "./pages/ResetPasswordWithToken";
+import AdminDashboard from "./pages/AdminDashboard";
 
 const JOBS_PER_PAGE = 9;
 
@@ -22,7 +23,7 @@ export default function App() {
   const [favoriteUrls, setFavoriteUrls] = useState([]);
   const [resumeMissing, setResumeMissing] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
-  const [userProfile, setUserProfile] = useState({ name: '', email: '', birthDate: '', initials: '' });
+  const [userProfile, setUserProfile] = useState({ name: '', email: '', birthDate: '', initials: '', isAdmin: false });
   const [searchTerm, setSearchTerm] = useState("");
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [recoveryToken, setRecoveryToken] = useState(null);
@@ -30,7 +31,7 @@ export default function App() {
   const loadUserProfile = async () => {
     try {
       const response = await api.get("/profile");
-      const { email, name, birth_date } = response.data;
+      const { email, name, birth_date, is_admin } = response.data;
       
       const parsedName = name || 'Usuário';
       const parsedBirthDate = birth_date || '';
@@ -41,7 +42,7 @@ export default function App() {
         initials += parts[parts.length - 1].charAt(0).toUpperCase();
       }
 
-      setUserProfile({ email, name: parsedName, birthDate: parsedBirthDate, initials });
+      setUserProfile({ email, name: parsedName, birthDate: parsedBirthDate, initials, isAdmin: is_admin });
     } catch (err) {
       console.error("Erro ao carregar perfil do usuario", err);
     }
@@ -136,6 +137,20 @@ export default function App() {
     return <ResetPasswordWithToken recoveryToken={recoveryToken} goToLogin={() => setView("login")} />;
   }
 
+  if (view === "admin" && userProfile.isAdmin) {
+    return (
+      <div style={{ background: "#0f172a", minHeight: "100vh", display: "flex", flexDirection: "column", overflow: "hidden", height: "100vh" }}>
+        <Navbar currentView={view} setView={setView} handleLogout={handleLogout} userProfile={userProfile} />
+        <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
+          <Sidebar currentView={view} setView={setView} isAdmin={userProfile.isAdmin} />
+          <main style={{ flex: 1, overflowY: "auto" }}>
+            <AdminDashboard />
+          </main>
+        </div>
+      </div>
+    );
+  }
+
 // New layout wrapping for main authenticated area
   const renderAuthenticatedView = () => {
     let content;
@@ -217,7 +232,7 @@ export default function App() {
     
     return (
       <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-        <Sidebar currentView={view} setView={setView} />
+        <Sidebar currentView={view} setView={setView} isAdmin={userProfile.isAdmin} />
         <main style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column" }}>
           {content}
         </main>
