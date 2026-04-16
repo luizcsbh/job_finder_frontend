@@ -150,7 +150,7 @@ export default function App() {
         }} />;
         break;
       case "profile":
-        content = <Profile userProfile={userProfile} setUserProfile={setUserProfile} />;
+        content = <Profile userProfile={userProfile} setUserProfile={setUserProfile} handleLogout={handleLogout} />;
         break;
       default:
         content = (

@@ -3,7 +3,7 @@ import { api } from '../services/api';
 import PasswordInput from '../components/PasswordInput';
 import Button from '../components/Button';
 
-export default function Profile({ userProfile, setUserProfile }) {
+export default function Profile({ userProfile, setUserProfile, handleLogout }) {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -18,6 +18,8 @@ export default function Profile({ userProfile, setUserProfile }) {
   const [pwMessage, setPwMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [isUpdatingPw, setIsUpdatingPw] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const pwRequirements = useMemo(() => [
     { label: "Mínimo de 8 caracteres", met: newPassword.length >= 8 },
@@ -96,6 +98,19 @@ export default function Profile({ userProfile, setUserProfile }) {
       setPwMessage(errorMsg);
     } finally {
       setIsUpdatingPw(false);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    setIsDeleting(true);
+    try {
+      await api.delete("/profile");
+      handleLogout();
+    } catch (err) {
+      console.error("Erro ao excluir conta", err);
+      alert("Erro ao excluir conta. Tente novamente.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -227,6 +242,54 @@ export default function Profile({ userProfile, setUserProfile }) {
         >
           Atualizar Senha
         </Button>
+      </div>
+
+      <div style={{ ...styles.card, borderColor: "#ef444433", marginTop: "10px" }}>
+        <h2 style={{ fontSize: "22px", color: "#ef4444", marginBottom: "15px", width: "100%", alignSelf: "flex-start" }}>Zona de Perigo</h2>
+        <p style={{ fontSize: "14px", color: "#94a3b8", marginBottom: "20px", textAlign: "left", width: "100%" }}>
+            Uma vez excluída, sua conta, currículo e vagas favoritas serão permanentemente removidos. Esta ação não pode ser desfeita.
+        </p>
+        
+        {!showDeleteConfirm ? (
+            <Button 
+                onClick={() => setShowDeleteConfirm(true)} 
+                style={styles.deleteBtn}
+            >
+                Excluir Minha Conta
+            </Button>
+        ) : (
+            <div style={{ width: "100%" }}>
+                <p style={{ color: "#ef4444", fontWeight: "bold", marginBottom: "15px", fontSize: "14px" }}>
+                    Tem certeza absoluta? Digite "EXCLUIR" para confirmar.
+                </p>
+                <input 
+                    placeholder="Digite EXCLUIR" 
+                    style={{ ...styles.input, marginBottom: "15px" }}
+                    id="delete-confirm-input"
+                    onChange={(e) => {
+                        const btn = document.getElementById("final-delete-btn");
+                        if (btn) btn.disabled = e.target.value !== "EXCLUIR";
+                    }}
+                />
+                <div style={{ display: "flex", gap: "10px" }}>
+                    <Button 
+                        style={styles.cancelBtn} 
+                        onClick={() => setShowDeleteConfirm(false)}
+                    >
+                        Não, manter conta
+                    </Button>
+                    <Button 
+                        id="final-delete-btn"
+                        style={{ ...styles.deleteBtn, opacity: 0.5 }} 
+                        onClick={handleDeleteAccount}
+                        loading={isDeleting}
+                        disabled={true}
+                    >
+                        Sim, excluir permanentemente
+                    </Button>
+                </div>
+            </div>
+        )}
       </div>
     </div>
   );
@@ -374,5 +437,17 @@ const styles = {
     textAlign: "center",
     marginBottom: "15px",
     width: "100%"
+  },
+  deleteBtn: {
+    padding: "12px 24px",
+    background: "transparent",
+    color: "#ef4444",
+    border: "1px solid #ef4444",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontWeight: "bold",
+    width: "100%",
+    fontSize: "16px",
+    transition: "0.3s"
   }
 };
