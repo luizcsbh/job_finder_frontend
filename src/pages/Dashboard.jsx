@@ -8,7 +8,7 @@ const CATEGORY_COLORS = {
   Database: "#f97316",     // Orange
   DevOps: "#a855f7",       // Purple
   Mobile: "#ec4899",       // Pink
-  "Data Science": "#facc15", // Yellow
+  Data_Science: "#facc15", // Yellow
   Other: "#64748b"         // Gray
 };
 
@@ -112,7 +112,7 @@ export default function Dashboard({ onRefresh }) {
       {/* Grid Superior: Gauges e Status */}
       <div style={{...styles.grid, marginBottom: "30px"}}>
          <div style={{...styles.card, display: "flex", justifyContent: "space-around", alignItems: "center"}}>
-            {renderGauge(profile?.analysis?.metrics?.completeness || 0, "Completude", "#38bdf8")}
+            {renderGauge(profile?.analysis?.metrics?.completeness || 0, "Plenitude", "#38bdf8")}
             {renderGauge(profile?.analysis?.metrics?.readiness || 0, "Prontidão", "#22c55e")}
             <div style={styles.seniorityBadge}>
                 <span style={{fontSize: "12px", color: "#94a3b8"}}>Nível Estimado</span>
