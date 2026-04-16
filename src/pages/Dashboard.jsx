@@ -2,6 +2,16 @@ import { useEffect, useState } from "react";
 import { api } from "../services/api";
 import Button from "../components/Button";
 
+const CATEGORY_COLORS = {
+  Frontend: "#38bdf8",     // Blue
+  Backend: "#22c55e",      // Green
+  Database: "#f97316",     // Orange
+  DevOps: "#a855f7",       // Purple
+  Mobile: "#ec4899",       // Pink
+  "Data Science": "#facc15", // Yellow
+  Other: "#64748b"         // Gray
+};
+
 export default function Dashboard({ onRefresh }) {
   const [profile, setProfile] = useState(null);
   const [file, setFile] = useState(null);
@@ -149,16 +159,33 @@ export default function Dashboard({ onRefresh }) {
             <span style={styles.countBadge}>{profile?.analysis?.keywords?.length || 0} termos</span>
           </div>
           <div style={styles.wordCloud}>
-            {profile?.analysis?.keywords?.map((word, i) => (
-              <span key={i} style={{
-                fontSize: `${((word.length * 2 + i) % 12) + 14}px`,
-                color: ["#38bdf8", "#22c55e", "#facc15", "#a855f7", "#fb923c"][i % 5],
-                margin: "6px",
-                display: "inline-block",
-                fontWeight: "bold",
-                opacity: 0.85
-              }}>{word}</span>
-            ))}
+            {(() => {
+              const wordToCategory = {};
+              if (profile?.analysis?.skills) {
+                Object.entries(profile.analysis.skills).forEach(([category, skills]) => {
+                  skills.forEach(skill => {
+                    wordToCategory[skill.toLowerCase()] = category;
+                  });
+                });
+              }
+
+              return (profile?.analysis?.keywords || []).map((word, i) => {
+                const category = wordToCategory[word.toLowerCase()] || "Other";
+                const color = CATEGORY_COLORS[category] || CATEGORY_COLORS.Other;
+                
+                return (
+                  <span key={i} style={{
+                    fontSize: `${((word.length * 2 + i) % 12) + 14}px`,
+                    color: color,
+                    margin: "6px",
+                    display: "inline-block",
+                    fontWeight: "bold",
+                    opacity: 0.85,
+                    textShadow: `0 0 10px ${color}22`
+                  }}>{word}</span>
+                );
+              });
+            })()}
           </div>
         </div>
 
@@ -176,9 +203,7 @@ export default function Dashboard({ onRefresh }) {
                   <div style={{
                     ...styles.barFill,
                     width: `${Math.min(skills.length * 20, 100)}%`,
-                    background: category === "Frontend" ? "#38bdf8" : 
-                                category === "Backend" ? "#22c55e" : 
-                                category === "Database" ? "#facc15" : "#a855f7"
+                    background: CATEGORY_COLORS[category] || CATEGORY_COLORS.Other
                   }}></div>
                 </div>
               </div>
