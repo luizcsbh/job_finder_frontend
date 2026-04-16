@@ -1,12 +1,12 @@
 import { useState, useMemo } from "react";
 import { api } from "../services/api";
+import PasswordInput from "../components/PasswordInput";
 
 export default function ResetPasswordWithToken({ recoveryToken, goToLogin }) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const pwRequirements = useMemo(() => [
@@ -56,33 +56,24 @@ export default function ResetPasswordWithToken({ recoveryToken, goToLogin }) {
 
         <div style={styles.inputGroup}>
             <label style={styles.label}>Nova Senha</label>
-            <div style={styles.passwordWrapper}>
-                <input
-                    placeholder="Crie uma nova senha forte"
-                    type={showPassword ? "text" : "password"}
-                    value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
-                    style={styles.passwordInput}
-                />
-                <button onClick={() => setShowPassword(!showPassword)} style={styles.toggleBtn} type="button">
-                   {showPassword ? "Esconder" : "Mostrar"}
-                </button>
-            </div>
+            <PasswordInput
+                placeholder="Crie uma nova senha forte"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                toggleButtonStyle={{ fontSize: "12px", fontWeight: "bold", color: "#38bdf8" }}
+            />
         </div>
 
         <div style={styles.inputGroup}>
             <label style={styles.label}>Confirmar Nova Senha</label>
-            <div style={styles.passwordWrapper}>
-                <input
-                    placeholder="Digite a nova senha novamente"
-                    type={showPassword ? "text" : "password"}
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    onPaste={(e) => e.preventDefault()}
-                    onCopy={(e) => e.preventDefault()}
-                    style={styles.passwordInput}
-                />
-            </div>
+            <PasswordInput
+                placeholder="Digite a nova senha novamente"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                onPaste={(e) => e.preventDefault()}
+                onCopy={(e) => e.preventDefault()}
+                toggleButtonStyle={{ fontSize: "12px", fontWeight: "bold", color: "#38bdf8" }}
+            />
         </div>
 
         <div style={styles.checklist}>
@@ -128,9 +119,7 @@ const styles = {
   card: { background: "#1e293b", padding: "40px", borderRadius: "16px", width: "360px", color: "#fff", boxShadow: "0 10px 25px rgba(0,0,0,0.3)" },
   inputGroup: { marginBottom: "15px" },
   label: { display: "block", fontSize: "12px", color: "#94a3b8", marginBottom: "5px" },
-  passwordWrapper: { position: "relative", display: "flex", alignItems: "center" },
-  passwordInput: { width: "100%", padding: "12px", paddingRight: "65px", borderRadius: "8px", border: "1px solid #334155", background: "#0f172a", color: "#fff", outline: "none" },
-  toggleBtn: { position: "absolute", right: "12px", background: "none", border: "none", padding: 0, cursor: "pointer", color: "#38bdf8", fontSize: "12px", fontWeight: "bold" },
+
   checklist: { margin: "15px 0", fontSize: "12px" },
   checkItem: { display: "flex", alignItems: "center", marginBottom: "5px", transition: "color 0.3s" },
   icon: { fontWeight: "bold", marginRight: "8px", width: "15px" },
