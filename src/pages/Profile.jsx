@@ -19,6 +19,7 @@ export default function Profile({ userProfile, setUserProfile, handleLogout }) {
   const [isSaving, setIsSaving] = useState(false);
   const [isUpdatingPw, setIsUpdatingPw] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
   const pwRequirements = useMemo(() => [
@@ -265,25 +266,27 @@ export default function Profile({ userProfile, setUserProfile, handleLogout }) {
                 <input 
                     placeholder="Digite EXCLUIR" 
                     style={{ ...styles.input, marginBottom: "15px" }}
-                    id="delete-confirm-input"
-                    onChange={(e) => {
-                        const btn = document.getElementById("final-delete-btn");
-                        if (btn) btn.disabled = e.target.value !== "EXCLUIR";
-                    }}
+                    value={deleteConfirmText}
+                    onChange={(e) => setDeleteConfirmText(e.target.value)}
                 />
                 <div style={{ display: "flex", gap: "10px" }}>
                     <Button 
                         style={styles.cancelBtn} 
-                        onClick={() => setShowDeleteConfirm(false)}
+                        onClick={() => {
+                            setShowDeleteConfirm(false);
+                            setDeleteConfirmText("");
+                        }}
                     >
                         Não, manter conta
                     </Button>
                     <Button 
-                        id="final-delete-btn"
-                        style={{ ...styles.deleteBtn, opacity: 0.5 }} 
+                        style={{ 
+                            ...styles.deleteBtn, 
+                            opacity: deleteConfirmText === "EXCLUIR" ? 1 : 0.5 
+                        }} 
                         onClick={handleDeleteAccount}
                         loading={isDeleting}
-                        disabled={true}
+                        disabled={deleteConfirmText !== "EXCLUIR"}
                     >
                         Sim, excluir permanentemente
                     </Button>
