@@ -119,7 +119,7 @@ export default function Dashboard({ onRefresh }) {
                 style={styles.uploadBtn}
                 loading={loading}
             >
-                Atualizar Currículo
+                {profile?.has_resume ? "Atualizar Currículo" : "Enviar Currículo"}
             </Button>
 
             {profile?.has_resume && (
