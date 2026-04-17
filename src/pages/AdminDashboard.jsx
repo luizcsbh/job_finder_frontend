@@ -15,7 +15,8 @@ export default function AdminDashboard() {
     loadAdminData();
   }, []);
 
-  constRefreshing(true);
+  const loadAdminData = async () => {
+    setRefreshing(true);
     try {
       const [statsRes, healthRes, usersRes] = await Promise.all([
         api.get("/admin/stats"),
@@ -25,12 +26,11 @@ export default function AdminDashboard() {
       setStats(statsRes.data);
       setApiHealth(healthRes.data.apis);
       setUsers(usersRes.data.users);
-    } catch (err) {
-      console.error("Erro ao carregar dados admin", err);
+    } catch (error) {
+      console.error("Erro ao carregar dados admin", error);
     } finally {
       setLoading(false);
-      setRefresh {
-      setLoading(false);
+      setRefreshing(false);
     }
   };
 
@@ -38,7 +38,7 @@ export default function AdminDashboard() {
     try {
       await api.put(`/admin/users/${userId}`, { is_admin: isAdmin });
       setUsers(users.map(u => u.id === userId ? { ...u, is_admin: isAdmin } : u));
-    } catch (err) {
+    } catch (error) {
       alert("Erro ao atualizar status de administrador");
     }
   };
@@ -48,7 +48,7 @@ export default function AdminDashboard() {
     try {
       await api.delete(`/admin/users/${userId}`);
       setUsers(users.filter(u => u.id !== userId));
-    } catch (err) {
+    } catch (error) {
       alert("Erro ao excluir usuário");
     }
   };
@@ -69,10 +69,10 @@ export default function AdminDashboard() {
         <div style={styles.headerContent}>
           <h1 style={styles.title}>🛡️ Painel do Administrador</h1>
           <p style={styles.subtitle}>Gerenciamento centralizado do sistema Job Finder Pro</p>
-        </div>disabled={refreshing} style={styles.refreshBtn}>
+        </div>
+        <Button onClick={loadAdminData} disabled={refreshing} style={styles.refreshBtn}>
           {refreshing ? "Atualizando..." : "Atualizar Dados"}
-        
-        <Button onClick={loadAdminData} style={styles.refreshBtn}>Atualizar Dados</Button>
+        </Button>
       </header>
 
       <div style={styles.tabs}>

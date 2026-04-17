@@ -1,6 +1,6 @@
 import Button from "./Button";
 
-export default function Navbar({ currentView, setView, handleLogout, userProfile }) {
+export default function Navbar({ setView, handleLogout, userProfile }) {
   return (
     <nav style={styles.nav}>
       <div style={styles.logo} onClick={() => setView("main")}>

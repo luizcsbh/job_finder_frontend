@@ -5,18 +5,18 @@ import JobCard from "../components/JobCard";
 export default function Favorites() {
   const [favorites, setFavorites] = useState([]);
 
-  useEffect(() => {
-    loadFavorites();
-  }, []);
-
   const loadFavorites = async () => {
     try {
       const response = await api.get("/favorites");
       setFavorites(response.data.favorites);
-    } catch (err) {
-      console.error("Erro ao carregar favoritos", err);
+    } catch (error) {
+      console.error("Erro ao carregar favoritos", error);
     }
   };
+
+  useEffect(() => {
+    loadFavorites();
+  }, []);
 
   return (
     <div style={{ padding: "40px", background: "#0f172a", minHeight: "100vh" }}>
@@ -45,14 +45,3 @@ export default function Favorites() {
     </div>
   );
 }
-
-const styles = {
-  backBtn: {
-    padding: "8px 16px",
-    background: "#334155",
-    color: "#fff",
-    border: "none",
-    borderRadius: "6px",
-    cursor: "pointer"
-  }
-};

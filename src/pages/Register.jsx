@@ -41,7 +41,7 @@ export default function Register({ goToLogin }) {
       setTimeout(() => {
         goToLogin();
       }, 1500);
-    } catch (err) {
+    } catch (error) {
       const errorMsg = err.response?.data?.detail || "Erro ao criar conta";
       setMessage(errorMsg);
     } finally {

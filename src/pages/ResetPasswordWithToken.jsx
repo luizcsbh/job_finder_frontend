@@ -39,7 +39,7 @@ export default function ResetPasswordWithToken({ recoveryToken, goToLogin }) {
       setTimeout(() => {
         goToLogin();
       }, 3000);
-    } catch (err) {
+    } catch (error) {
       setMessage(err.response?.data?.detail || "Erro ao redefinir a senha. O link pode estar expirado.");
       setIsError(true);
     } finally {

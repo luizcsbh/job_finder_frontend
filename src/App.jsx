@@ -43,7 +43,7 @@ export default function App() {
       }
 
       setUserProfile({ email, name: parsedName, birthDate: parsedBirthDate, initials, isAdmin: is_admin });
-    } catch (err) {
+    } catch (error) {
       console.error("Erro ao carregar perfil do usuario", err);
     }
   };
@@ -93,7 +93,7 @@ export default function App() {
         setResumeMissing(false);
         setTotalPages(response.data.totalPages || 1);
       }
-    } catch (err) {
+    } catch (error) {
       console.error("Erro ao carregar vagas", err);
     }
   };
@@ -102,7 +102,7 @@ export default function App() {
     try {
       const response = await api.get("/favorites");
       setFavoriteUrls(response.data.favorites.map(f => f.url));
-    } catch (err) {
+    } catch (error) {
       console.error("Erro ao carregar URLs favoritas", err);
     }
   };

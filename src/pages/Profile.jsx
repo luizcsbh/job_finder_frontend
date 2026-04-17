@@ -66,7 +66,7 @@ export default function Profile({ userProfile, setUserProfile, handleLogout }) {
       });
 
       setIsEditing(false);
-    } catch (err) {
+    } catch (error) {
       console.error("Erro ao salvar perfil", err);
     } finally {
       setIsSaving(false);
@@ -94,7 +94,7 @@ export default function Profile({ userProfile, setUserProfile, handleLogout }) {
       setNewPassword("");
       setConfirmPassword("");
       setTimeout(() => setPwMessage(""), 3000);
-    } catch (err) {
+    } catch (error) {
       const errorMsg = err.response?.data?.detail || "Erro ao alterar a senha";
       setPwMessage(errorMsg);
     } finally {
@@ -107,7 +107,7 @@ export default function Profile({ userProfile, setUserProfile, handleLogout }) {
     try {
       await api.delete("/profile");
       handleLogout();
-    } catch (err) {
+    } catch (error) {
       console.error("Erro ao excluir conta", err);
       alert("Erro ao excluir conta. Tente novamente.");
     } finally {

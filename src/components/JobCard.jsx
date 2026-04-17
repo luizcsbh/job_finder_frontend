@@ -10,7 +10,7 @@ export default function JobCard({ job, isFavorite, onFavoriteToggle }) {
     try {
       await api.post("/favorites", { job_url: job.url });
       onFavoriteToggle();
-    } catch (err) {
+    } catch (error) {
       console.error("Erro ao favoritar", err);
     } finally {
       setToggling(false);

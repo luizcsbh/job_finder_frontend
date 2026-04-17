@@ -22,7 +22,7 @@ export default function ForgotPassword({ goToLogin }) {
       await api.post("/forgot-password", { email });
       setMessage("Link de recuperação enviado! Verifique seu e-mail.");
       setIsError(false);
-    } catch (err) {
+    } catch (error) {
       setMessage(err.response?.data?.detail || "Erro ao solicitar recuperação.");
       setIsError(true);
     } finally {
