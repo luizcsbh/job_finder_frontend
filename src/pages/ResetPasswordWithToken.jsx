@@ -40,7 +40,7 @@ export default function ResetPasswordWithToken({ recoveryToken, goToLogin }) {
         goToLogin();
       }, 3000);
     } catch (error) {
-      setMessage(err.response?.data?.detail || "Erro ao redefinir a senha. O link pode estar expirado.");
+      setMessage(error.response?.data?.detail || "Erro ao redefinir a senha. O link pode estar expirado.");
       setIsError(true);
     } finally {
       setLoading(false);

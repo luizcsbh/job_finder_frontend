@@ -62,7 +62,7 @@ export default function AdminDashboard() {
     try {
       await api.put(`/admin/users/${userId}`, { is_admin: isAdmin });
       setUsers(users.map(u => u.id === userId ? { ...u, is_admin: isAdmin } : u));
-    } catch (error) {
+    } catch {
       alert("Erro ao atualizar status de administrador");
     }
   };
@@ -72,7 +72,7 @@ export default function AdminDashboard() {
     try {
       await api.delete(`/admin/users/${userId}`);
       setUsers(users.filter(u => u.id !== userId));
-    } catch (error) {
+    } catch {
       alert("Erro ao excluir usuário");
     }
   };

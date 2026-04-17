@@ -1,22 +1,25 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { api } from "../services/api";
 import JobCard from "../components/JobCard";
 
 export default function Favorites() {
   const [favorites, setFavorites] = useState([]);
+  const hasLoaded = useRef(false);
 
-  const loadFavorites = async () => {
+  const loadFavorites = useCallback(async () => {
+    if (hasLoaded.current) return;
     try {
       const response = await api.get("/favorites");
       setFavorites(response.data.favorites);
+      hasLoaded.current = true;
     } catch (error) {
       console.error("Erro ao carregar favoritos", error);
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadFavorites();
-  }, []);
+  }, [loadFavorites]);
 
   return (
     <div style={{ padding: "40px", background: "#0f172a", minHeight: "100vh" }}>

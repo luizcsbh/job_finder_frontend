@@ -2,7 +2,7 @@ import { useState } from "react";
 import { api } from "../services/api";
 import Button from "./Button";
 
-export default function JobCard({ job, isFavorite, onFavoriteToggle }) {
+export default function JobCard({ job, isFavorite, onFavoriteToggle, onViewDetails }) {
   const [toggling, setToggling] = useState(false);
 
   const toggleFavorite = async () => {

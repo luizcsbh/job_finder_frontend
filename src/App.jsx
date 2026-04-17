@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { api } from "./services/api";
 import JobCard from "./components/JobCard";
 import Pagination from "./components/Pagination";
@@ -30,55 +30,7 @@ export default function App() {
   const [searchTimeout, setSearchTimeout] = useState(null);
   const [recoveryToken, setRecoveryToken] = useState(null);
 
-  const loadUserProfile = async () => {
-    try {
-      const response = await api.get("/profile");
-      const { email, name, birth_date, is_admin } = response.data;
-      
-      const parsedName = name || 'Usuário';
-      const parsedBirthDate = birth_date || '';
-      
-      const parts = parsedName.trim().split(" ");
-      let initials = parts[0] ? parts[0].charAt(0).toUpperCase() : 'U';
-      if (parts.length > 1) {
-        initials += parts[parts.length - 1].charAt(0).toUpperCase();
-      }
-
-      setUserProfile({ email, name: parsedName, birthDate: parsedBirthDate, initials, isAdmin: is_admin });
-    } catch (error) {
-      console.error("Erro ao carregar perfil do usuario", error);
-    }
-  };
-
-  useEffect(() => {
-    // Check for Supabase Auth hash routing
-    const hashStr = window.location.hash;
-    if (hashStr && hashStr.includes("type=recovery") && hashStr.includes("access_token=")) {
-      const params = new URLSearchParams(hashStr.substring(1));
-      const accessToken = params.get("access_token");
-      if (accessToken) {
-        setRecoveryToken(accessToken);
-        setView("reset-password-with-token");
-        window.history.replaceState(null, "", window.location.pathname);
-        return;
-      }
-    }
-
-    if (token) {
-      if (view === "login" || view === "register" || view === "forgot-password") {
-        setView("main");
-      }
-      loadJobs(page, searchTerm);
-      loadFavoriteUrls();
-      loadUserProfile();
-    } else {
-      if (view !== "register" && view !== "forgot-password") {
-        setView("login");
-      }
-    }
-  }, [token, page]);
-
-  const loadJobs = async (pageToLoad, term = searchTerm) => {
+  const loadJobs = useCallback(async (pageToLoad, term = searchTerm) => {
     try {
       const url = term 
         ? `/jobs?page=${pageToLoad}&limit=${JOBS_PER_PAGE}&search=${encodeURIComponent(term)}`
@@ -98,16 +50,72 @@ export default function App() {
     } catch (error) {
       console.error("Erro ao carregar vagas", error);
     }
-  };
+  }, [searchTerm]);
 
-  const loadFavoriteUrls = async () => {
+  const loadFavoriteUrls = useCallback(async () => {
     try {
       const response = await api.get("/favorites");
       setFavoriteUrls(response.data.favorites.map(f => f.url));
     } catch (error) {
       console.error("Erro ao carregar URLs favoritas", error);
     }
-  };
+  }, []);
+
+  const loadUserProfile = useCallback(async () => {
+    try {
+      const response = await api.get("/profile");
+      const { email, name, birth_date, is_admin } = response.data;
+      
+      const parsedName = name || 'Usuário';
+      const parsedBirthDate = birth_date || '';
+      
+      const parts = parsedName.trim().split(" ");
+      let initials = parts[0] ? parts[0].charAt(0).toUpperCase() : 'U';
+      if (parts.length > 1) {
+        initials += parts[parts.length - 1].charAt(0).toUpperCase();
+      }
+
+      setUserProfile({ email, name: parsedName, birthDate: parsedBirthDate, initials, isAdmin: is_admin });
+    } catch (error) {
+      console.error("Erro ao carregar perfil do usuario", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Check for Supabase Auth hash routing
+    const hashStr = window.location.hash;
+    if (hashStr && hashStr.includes("type=recovery") && hashStr.includes("access_token=")) {
+      const params = new URLSearchParams(hashStr.substring(1));
+      const accessToken = params.get("access_token");
+      if (accessToken) {
+        setRecoveryToken(accessToken);
+        setView("reset-password-with-token");
+        window.history.replaceState(null, "", window.location.pathname);
+        return;
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (token) {
+      loadJobs(page, searchTerm);
+      loadFavoriteUrls();
+      loadUserProfile();
+    }
+  }, [token, page, searchTerm, loadJobs, loadFavoriteUrls, loadUserProfile]);
+
+  // Handle view changes based on authentication state
+  useEffect(() => {
+    if (token) {
+      if (view === "login" || view === "register" || view === "forgot-password") {
+        setView("main");
+      }
+    } else {
+      if (view !== "register" && view !== "forgot-password") {
+        setView("login");
+      }
+    }
+  }, [token, view]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");

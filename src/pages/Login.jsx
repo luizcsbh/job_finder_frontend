@@ -15,8 +15,8 @@ export default function Login({ setToken, goToRegister, goToForgotPassword }) {
       const res = await api.post("/login", { email, password });
       localStorage.setItem("token", res.data.token);
       setToken(res.data.token);
-    } catch (error) {
-      const errorMsg = err.response?.data?.detail || "Credenciais inválidas";
+    } catch {
+      const errorMsg = "Credenciais inválidas";
       setError(errorMsg);
     } finally {
       setLoading(false);

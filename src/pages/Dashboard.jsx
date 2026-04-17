@@ -26,8 +26,8 @@ export default function Dashboard({ onRefresh }) {
     try {
       const response = await api.get("/profile");
       setProfile(response.data);
-    } catch (error) {
-      console.error("Erro ao carregar perfil", err);
+    } catch {
+      console.error("Erro ao carregar perfil");
     }
   };
 
@@ -54,7 +54,7 @@ export default function Dashboard({ onRefresh }) {
       setMessage("Currículo enviado com sucesso!");
       loadProfile(); 
       if (onRefresh) onRefresh();
-    } catch (error) {
+    } catch {
       setMessage("Erro ao enviar currículo.");
     } finally {
       setLoading(false);
@@ -72,7 +72,7 @@ export default function Dashboard({ onRefresh }) {
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
-    } catch (error) {
+    } catch {
       setMessage("Erro ao baixar currículo. Verifique se você fez upload.");
     }
   };

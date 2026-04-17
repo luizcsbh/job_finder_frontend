@@ -42,7 +42,7 @@ export default function Register({ goToLogin }) {
         goToLogin();
       }, 1500);
     } catch (error) {
-      const errorMsg = err.response?.data?.detail || "Erro ao criar conta";
+      const errorMsg = error.response?.data?.detail || "Erro ao criar conta";
       setMessage(errorMsg);
     } finally {
       setLoading(false);
