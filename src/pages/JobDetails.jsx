@@ -13,14 +13,13 @@ export default function JobDetails({ job, onBack }) {
   return (
     <div style={styles.container}>
       <button onClick={onBack} style={styles.backBtn}>← Voltar</button>
-      <Button onClick={() => window.open(job.url, "_blank", "noreferrer") } style={styles.openBtn}>
-          Abrir vaga original
-        </Button>
       <div style={styles.header}>
         <h1 style={styles.title}>{job.title}</h1>
         <p style={styles.subtitle}>{job.company}</p>
         <span style={styles.sourceTag}>{job.source}</span>
-        
+        <Button onClick={() => window.open(job.url, "_blank", "noreferrer")} style={styles.openBtn}>
+          Abrir vaga original
+        </Button>
       </div>
 
       <div style={styles.detailsCard}>
@@ -64,15 +63,15 @@ const styles = {
     textAlign: "center"
   },
   backBtn: {
-    alignSelf: "flex-start",
-    marginBottom: "30px",
+    marginBottom: "20px",
     padding: "10px 16px",
     background: "#334155",
     color: "#fff",
     border: "none",
     borderRadius: "8px",
     cursor: "pointer",
-    fontWeight: "bold"
+    fontWeight: "bold",
+    transition: "background 0.2s"
   },
   title: {
     fontSize: "32px",
@@ -92,13 +91,15 @@ const styles = {
     fontWeight: "bold"
   },
   openBtn: {
-    padding: "12px 20px",
+    marginTop: "12px",
+    padding: "12px 24px",
     background: "#38bdf8",
     color: "#0f172a",
     border: "none",
     borderRadius: "10px",
     cursor: "pointer",
-    fontWeight: "bold"
+    fontWeight: "bold",
+    transition: "background 0.2s"
   },
   detailsCard: {
     marginTop: "30px",
