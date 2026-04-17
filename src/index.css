@@ -55,9 +55,8 @@ body {
 }
 
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   text-align: center;
   border-inline: 1px solid var(--border);
   min-height: 100svh;
@@ -116,3 +115,12 @@ code {
   to { transform: rotate(360deg); }
 }
 
+
+.sidebar-btn:hover {
+  background: rgba(148, 163, 184, 0.1) !important;
+  color: #fff !important;
+}
+
+.sidebar-btn-active:hover {
+  background: #38bdf8 !important;
+}
