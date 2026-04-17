@@ -84,6 +84,16 @@ export default function AdminDashboard() {
             <span style={styles.statValue}>{stats?.total_users}</span>
           </div>
           <div style={styles.statCard}>
+            <span style={styles.statLabel}>APIs Online</span>
+            <span style={{...styles.statValue, color: "#22c55e"}}>{apiHealth?.filter(a => a.status === "ok").length || 0}</span>
+          </div>
+          <div style={styles.statCard}>
+            <span style={styles.statLabel}>Alertas de API</span>
+            <span style={{...styles.statValue, color: (apiHealth?.filter(a => a.status !== "ok").length || 0) > 0 ? "#f59e0b" : "#94a3b8"}}>
+              {apiHealth?.filter(a => a.status !== "ok").length || 0}
+            </span>
+          </div>
+          <div style={styles.statCard}>
             <span style={styles.statLabel}>Status do Sistema</span>
             <span style={{...styles.statValue, color: "#22c55e"}}>{stats?.system_status}</span>
           </div>
@@ -206,7 +216,7 @@ const styles = {
   tab: { padding: "10px 20px", background: "transparent", color: "#94a3b8", border: "none", cursor: "pointer", fontWeight: "600" },
   activeTab: { padding: "10px 20px", background: "#38bdf822", color: "#38bdf8", border: "none", borderRadius: "8px", cursor: "pointer", fontWeight: "bold" },
 
-  grid: { display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px" },
+  grid: { display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "20px" },
   statCard: { background: "#1e293b", padding: "25px", borderRadius: "16px", border: "1px solid #334155", display: "flex", flexDirection: "column" },
   statLabel: { fontSize: "14px", color: "#94a3b8", marginBottom: "10px" },
   statValue: { fontSize: "32px", fontWeight: "bold" },
