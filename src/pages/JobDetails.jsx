@@ -12,13 +12,11 @@ export default function JobDetails({ job, onBack }) {
 
   return (
     <div style={styles.container}>
+      <button onClick={onBack} style={styles.backBtn}>← Voltar</button>
       <div style={styles.header}>
-        <div>
-          <button onClick={onBack} style={styles.backBtn}>← Voltar</button>
-          <h1 style={styles.title}>{job.title}</h1>
-          <p style={styles.subtitle}>{job.company}</p>
-          <span style={styles.sourceTag}>{job.source}</span>
-        </div>
+        <h1 style={styles.title}>{job.title}</h1>
+        <p style={styles.subtitle}>{job.company}</p>
+        <span style={styles.sourceTag}>{job.source}</span>
         <Button onClick={() => window.open(job.url, "_blank", "noreferrer") } style={styles.openBtn}>
           Abrir vaga original
         </Button>
@@ -59,13 +57,14 @@ const styles = {
   },
   header: {
     display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    gap: "20px",
-    flexWrap: "wrap"
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "16px",
+    textAlign: "center"
   },
   backBtn: {
-    marginBottom: "20px",
+    alignSelf: "flex-start",
+    marginBottom: "30px",
     padding: "10px 16px",
     background: "#334155",
     color: "#fff",
