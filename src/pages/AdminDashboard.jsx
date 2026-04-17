@@ -150,52 +150,39 @@ export default function AdminDashboard() {
 
       {tab === "apis" && apiHealth && (
         <div style={styles.apiGrid}>
-          {/* Main System Status Card */}
-          <div style={{ ...styles.apiCard, gridColumn: "span 2", border: "1px solid #38bdf844", background: "rgba(56, 189, 248, 0.05)" }}>
-            <div style={styles.apiInfo}>
-              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                <div style={{ 
-                  ...styles.statusDot, 
-                  background: apiHealth.system_db?.status === "Active" ? (apiHealth.system_db.latency > 500 ? "#f59e0b" : "#22c55e") : "#ef4444",
-                  boxShadow: apiHealth.system_db?.status === "Active" ? (apiHealth.system_db.latency > 500 ? "0 0 12px #f59e0b" : "0 0 12px #22c55e") : "0 0 12px #ef4444"
-                }} />
-                <span style={{ fontSize: "18px", fontWeight: "bold" }}>STATUS DO SISTEMA PRINCIPAL</span>
-              </div>
-              <span style={styles.latencyText}>{apiHealth.system_db?.latency}ms</span>
-            </div>
-            <p style={styles.apiDesc}>Conectividade com Banco de Dados e Serviços Core</p>
-          </div>
-
-          {/* Job APIs */}
-          {Object.entries(apiHealth).filter(([name]) => name !== "system_db").map(([name, data]) => {
-            const isDown = data.status !== "Active";
-            const isSlow = data.latency > 800;
-            const statusColor = isDown ? "#ef4444" : (isSlow ? "#f59e0b" : "#22c55e");
+          {apiHealth.map((api) => {
+            const statusColor = api.status === "ok" ? "#22c55e" : (api.status === "warning" ? "#f59e0b" : "#ef4444");
+            const statusLabel = api.status === "ok" ? "OK" : (api.status === "warning" ? "LENTO" : "OFFLINE");
             
             return (
-              <div key={name} style={styles.apiCard}>
+              <div key={api.api_name} style={styles.apiCard}>
                 <div style={styles.apiInfo}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                     <div style={{ 
                       ...styles.statusDot, 
                       background: statusColor,
                       boxShadow: `0 0 10px ${statusColor}44`
                     }} />
-                    <span style={styles.apiName}>{name.toUpperCase()}</span>
+                    <div>
+                      <span style={styles.apiName}>{api.api_name}</span>
+                      <p style={styles.apiDesc}>Última verificação: {api.last_check ? new Date(api.last_check).toLocaleTimeString() : "N/A"}</p>
+                    </div>
                   </div>
-                  <span style={styles.latencyText}>{data.latency}ms</span>
+                  <div style={{ textAlign: "right" }}>
+                    <span style={styles.latencyText}>{api.latency_ms}ms</span>
+                  </div>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                  <p style={styles.apiDesc}>Integração via {name.includes("linkedin") ? "Web Scraping" : "API REST"}</p>
+                <div style={{ display: "flex", justifyContent: "flex-end" }}>
                   <span style={{ 
-                    fontSize: "10px", 
+                    fontSize: "11px", 
                     fontWeight: "bold", 
-                    padding: "2px 6px", 
-                    borderRadius: "4px",
+                    padding: "4px 8px", 
+                    borderRadius: "6px",
                     background: statusColor + "22",
-                    color: statusColor
+                    color: statusColor,
+                    border: `1px solid ${statusColor}33`
                   }}>
-                    {isDown ? "OFFLINE" : (isSlow ? "LENTO" : "ONLINE")}
+                    {statusLabel}
                   </span>
                 </div>
               </div>
@@ -210,7 +197,7 @@ export default function AdminDashboard() {
 const styles = {
   container: { padding: "40px", color: "#fff", maxWidth: "1000px" },
   header: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px" },
-  title: { fontSize: "28px", margin: 0 },
+  title: { fontSize: "28px", marginTop: "5px" },
   subtitle: { color: "#94a3b8", marginTop: "5px" },
   refreshBtn: { background: "#38bdf8", color: "#0f172a", fontWeight: "bold" },
   loading: { height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", color: "#fff", background: "#0f172a" },
