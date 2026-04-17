@@ -238,7 +238,16 @@ const styles = {
   header: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "40px" },
   title: { fontSize: "28px", marginTop: "5px" },
   subtitle: { color: "#94a3b8", marginTop: "5px" },
-  refreshBtn: { background: "#38bdf8", color: "#0f172a", fontWeight: "bold" },
+  refreshBtn: {
+    padding: "10px 16px",
+    borderRadius: "8px",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "12px",
+    fontWeight: "bold",
+    background: "#38bdf8",
+    color: "#0f172a"
+  },
   loading: { height: "100vh", display: "flex", justifyContent: "center", alignItems: "center", color: "#fff", background: "#0f172a" },
   
   tabs: { display: "flex", gap: "10px", marginBottom: "30px", borderBottom: "1px solid #334155", paddingBottom: "10px" },
