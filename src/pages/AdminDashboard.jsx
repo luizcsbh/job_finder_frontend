@@ -8,6 +8,7 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState(null);
   const [tab, setTab] = useState("overview"); // overview, users, apis
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -16,18 +17,41 @@ export default function AdminDashboard() {
   }, []);
 
   const loadAdminData = async () => {
+    setLoading(true);
     setRefreshing(true);
+    setError(null);
+
     try {
-      const [statsRes, healthRes, usersRes] = await Promise.all([
+      const results = await Promise.allSettled([
         api.get("/admin/stats"),
         api.get("/admin/health"),
         api.get("/admin/users")
       ]);
-      setStats(statsRes.data);
-      setApiHealth(healthRes.data.apis);
-      setUsers(usersRes.data.users);
+
+      if (results[0].status === "fulfilled") {
+        setStats(results[0].value.data);
+      } else {
+        console.error("Erro ao carregar stats admin", results[0].reason);
+      }
+
+      if (results[1].status === "fulfilled") {
+        setApiHealth(results[1].value.data.apis);
+      } else {
+        console.error("Erro ao carregar health admin", results[1].reason);
+      }
+
+      if (results[2].status === "fulfilled") {
+        setUsers(results[2].value.data.users);
+      } else {
+        console.error("Erro ao carregar usuários admin", results[2].reason);
+      }
+
+      if (results.some((result) => result.status === "rejected")) {
+        setError("Alguns dados não puderam ser carregados. Verifique a autorização ou tente novamente.");
+      }
     } catch (error) {
       console.error("Erro ao carregar dados admin", error);
+      setError("Falha ao carregar os dados do admin. Tente novamente mais tarde.");
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -80,6 +104,7 @@ export default function AdminDashboard() {
         <button onClick={() => setTab("users")} style={tab === "users" ? styles.activeTab : styles.tab}>Usuários ({users.length})</button>
         <button onClick={() => setTab("apis")} style={tab === "apis" ? styles.activeTab : styles.tab}>Status das APIs</button>
       </div>
+      {error && <div style={styles.errorBox}>{error}</div>}
 
       {tab === "overview" && (
         <div style={styles.grid}>
@@ -233,6 +258,7 @@ const styles = {
 
   apiGrid: { display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "20px" },
   apiCard: { background: "#1e293b", padding: "20px", borderRadius: "16px", border: "1px solid #334155" },
+  errorBox: { marginBottom: "20px", padding: "15px", borderRadius: "12px", background: "#b91c1c", color: "#fff", fontWeight: "bold" },
   apiInfo: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "15px" },
   apiName: { fontWeight: "bold", fontSize: "16px" },
   apiDesc: { fontSize: "12px", color: "#64748b", margin: 0 },
