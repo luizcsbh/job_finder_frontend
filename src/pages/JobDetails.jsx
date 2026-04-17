@@ -13,13 +13,14 @@ export default function JobDetails({ job, onBack }) {
   return (
     <div style={styles.container}>
       <button onClick={onBack} style={styles.backBtn}>← Voltar</button>
+      <Button onClick={() => window.open(job.url, "_blank", "noreferrer") } style={styles.openBtn}>
+          Abrir vaga original
+        </Button>
       <div style={styles.header}>
         <h1 style={styles.title}>{job.title}</h1>
         <p style={styles.subtitle}>{job.company}</p>
         <span style={styles.sourceTag}>{job.source}</span>
-        <Button onClick={() => window.open(job.url, "_blank", "noreferrer") } style={styles.openBtn}>
-          Abrir vaga original
-        </Button>
+        
       </div>
 
       <div style={styles.detailsCard}>
