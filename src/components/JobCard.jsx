@@ -11,7 +11,7 @@ export default function JobCard({ job, isFavorite, onFavoriteToggle }) {
       await api.post("/favorites", { job_url: job.url });
       onFavoriteToggle();
     } catch (error) {
-      console.error("Erro ao favoritar", err);
+      console.error("Erro ao favoritar", error);
     } finally {
       setToggling(false);
     }
@@ -80,9 +80,15 @@ export default function JobCard({ job, isFavorite, onFavoriteToggle }) {
       {/* Footer */}
       <div style={styles.footer}>
         <span style={styles.score}>⭐ {job.score} pts</span>
-        <a href={job.url} target="_blank" rel="noreferrer" style={styles.link}>
-          Ver vaga →
-        </a>
+        {onViewDetails ? (
+          <button type="button" onClick={() => onViewDetails(job)} style={styles.detailsBtn}>
+            Ver vaga →
+          </button>
+        ) : (
+          <a href={job.url} target="_blank" rel="noreferrer" style={styles.link}>
+            Ver vaga →
+          </a>
+        )}
       </div>
     </div>
   );
@@ -186,5 +192,15 @@ const styles = {
     fontSize: "13px",
     fontWeight: "bold",
     textDecoration: "none"
+  },
+  detailsBtn: {
+    background: "transparent",
+    border: "1px solid #38bdf8",
+    color: "#38bdf8",
+    borderRadius: "999px",
+    padding: "8px 14px",
+    cursor: "pointer",
+    fontSize: "13px",
+    fontWeight: "bold"
   }
 };

@@ -12,6 +12,7 @@ import Profile from "./pages/Profile";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPasswordWithToken from "./pages/ResetPasswordWithToken";
 import AdminDashboard from "./pages/AdminDashboard";
+import JobDetails from "./pages/JobDetails";
 
 const JOBS_PER_PAGE = 9;
 
@@ -19,7 +20,8 @@ export default function App() {
   const [jobs, setJobs] = useState([]);
   const [page, setPage] = useState(1);
   const [token, setToken] = useState(localStorage.getItem("token"));
-  const [view, setView] = useState("login"); // login, register, main, favorites, dashboard, forgot-password
+  const [view, setView] = useState("login"); // login, register, main, favorites, dashboard, forgot-password, job-details
+  const [selectedJob, setSelectedJob] = useState(null);
   const [favoriteUrls, setFavoriteUrls] = useState([]);
   const [resumeMissing, setResumeMissing] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
@@ -44,7 +46,7 @@ export default function App() {
 
       setUserProfile({ email, name: parsedName, birthDate: parsedBirthDate, initials, isAdmin: is_admin });
     } catch (error) {
-      console.error("Erro ao carregar perfil do usuario", err);
+      console.error("Erro ao carregar perfil do usuario", error);
     }
   };
 
@@ -94,7 +96,7 @@ export default function App() {
         setTotalPages(response.data.totalPages || 1);
       }
     } catch (error) {
-      console.error("Erro ao carregar vagas", err);
+      console.error("Erro ao carregar vagas", error);
     }
   };
 
@@ -103,7 +105,7 @@ export default function App() {
       const response = await api.get("/favorites");
       setFavoriteUrls(response.data.favorites.map(f => f.url));
     } catch (error) {
-      console.error("Erro ao carregar URLs favoritas", err);
+      console.error("Erro ao carregar URLs favoritas", error);
     }
   };
 
@@ -163,6 +165,14 @@ export default function App() {
           content = null;
         }
         break;
+      case "job-details":
+        content = (
+          <JobDetails
+            job={selectedJob}
+            onBack={() => setView("main")}
+          />
+        );
+        break;
       default:
         content = (
           <div style={{ padding: "40px", flex: 1, overflowY: "auto" }}>
@@ -212,6 +222,10 @@ export default function App() {
                     job={job} 
                     isFavorite={favoriteUrls.includes(job.url)}
                     onFavoriteToggle={loadFavoriteUrls}
+                    onViewDetails={(selected) => {
+                      setSelectedJob(selected);
+                      setView("job-details");
+                    }}
                   />
                 ))
               )}
