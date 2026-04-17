@@ -23,25 +23,54 @@ export default function JobDetails({ job, onBack }) {
       </div>
 
       <div style={styles.detailsCard}>
-        <div style={styles.row}>
-          <strong>Pontuação ATS:</strong>
-          <span>{Math.min(Math.round(job.ai_score || 0), 100)}%</span>
+        {/* Informações Básicas */}
+        <div style={styles.section}>
+          <h3 style={styles.sectionTitle}>Informações Básicas</h3>
+          <div style={styles.row}>
+            <strong>Pontuação ATS:</strong>
+            <span>{Math.min(Math.round(job.ai_score || 0), 100)}%</span>
+          </div>
+          <div style={styles.row}>
+            <strong>Pontuação Geral:</strong>
+            <span>{job.score ?? "N/A"}</span>
+          </div>
+          <div style={styles.row}>
+            <strong>Localização:</strong>
+            <span>{job.location || "Não informado"}</span>
+          </div>
+          <div style={styles.row}>
+            <strong>Fonte:</strong>
+            <span>{job.source}</span>
+          </div>
         </div>
-        <div style={styles.row}>
-          <strong>Pontuação Geral:</strong>
-          <span>{job.score ?? "N/A"}</span>
+
+        {/* Detalhes da Vaga */}
+        <div style={styles.section}>
+          <h3 style={styles.sectionTitle}>Detalhes da Vaga</h3>
+          <div style={styles.row}>
+            <strong>Data de Publicação:</strong>
+            <span>{job.datate_posted ? new Date(job.datate_posted).toLocaleDateString('pt-BR') : "Não informado"}</span>
+          </div>
+          <div style={styles.row}>
+            <strong>Categoria:</strong>
+            <span>{Array.isArray(job.category) && job.category.length > 0 ? job.category.join(", ") : "Não informado"}</span>
+          </div>
+          <div style={styles.row}>
+            <strong>Salário:</strong>
+            <span>{job.salary || "Não informado"}</span>
+          </div>
+          <div style={styles.row}>
+            <strong>URL:</strong>
+            <a href={job.url} target="_blank" rel="noreferrer" style={styles.link}>{job.url}</a>
+          </div>
         </div>
-        <div style={styles.row}>
-          <strong>Fonte:</strong>
-          <span>{job.source}</span>
-        </div>
-        <div style={styles.row}>
-          <strong>URL:</strong>
-          <a href={job.url} target="_blank" rel="noreferrer" style={styles.link}>{job.url}</a>
-        </div>
-        <div style={styles.description}>
-          <h3>Descrição da vaga</h3>
-          <p>{job.description || "Descrição não disponível no momento."}</p>
+
+        {/* Descrição */}
+        <div style={styles.section}>
+          <h3 style={styles.sectionTitle}>Descrição da Vaga</h3>
+          <div style={styles.description}>
+            <p>{job.description || "Descrição não disponível no momento."}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -108,6 +137,17 @@ const styles = {
     borderRadius: "18px",
     padding: "30px"
   },
+  section: {
+    marginBottom: "30px"
+  },
+  sectionTitle: {
+    color: "#38bdf8",
+    fontSize: "18px",
+    fontWeight: "bold",
+    marginBottom: "15px",
+    borderBottom: "2px solid #38bdf8",
+    paddingBottom: "8px"
+  },
   row: {
     display: "flex",
     justifyContent: "space-between",
@@ -121,10 +161,14 @@ const styles = {
     textDecoration: "underline"
   },
   description: {
-    marginTop: "24px",
+    marginTop: "15px",
     color: "#e2e8f0",
     lineHeight: 1.7,
-    fontSize: "15px"
+    fontSize: "15px",
+    background: "#0f172a",
+    padding: "20px",
+    borderRadius: "12px",
+    border: "1px solid #334155"
   },
   message: {
     marginBottom: "20px",
