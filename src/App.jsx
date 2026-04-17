@@ -137,19 +137,7 @@ export default function App() {
     return <ResetPasswordWithToken recoveryToken={recoveryToken} goToLogin={() => setView("login")} />;
   }
 
-  if (view === "admin" && userProfile.isAdmin) {
-    return (
-      <div style={{ background: "#0f172a", minHeight: "100vh", display: "flex", flexDirection: "column", overflow: "hidden", height: "100vh" }}>
-        <Navbar currentView={view} setView={setView} handleLogout={handleLogout} userProfile={userProfile} />
-        <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
-          <Sidebar currentView={view} setView={setView} isAdmin={userProfile.isAdmin} />
-          <main style={{ flex: 1, overflowY: "auto" }}>
-            <AdminDashboard />
-          </main>
-        </div>
-      </div>
-    );
-  }
+
 
 // New layout wrapping for main authenticated area
   const renderAuthenticatedView = () => {
@@ -166,6 +154,14 @@ export default function App() {
         break;
       case "profile":
         content = <Profile userProfile={userProfile} setUserProfile={setUserProfile} handleLogout={handleLogout} />;
+        break;
+      case "admin":
+        if (userProfile.isAdmin) {
+          content = <AdminDashboard />;
+        } else {
+          setView("main");
+          content = null;
+        }
         break;
       default:
         content = (
