@@ -17,17 +17,22 @@ export default function Dashboard({ onRefresh }) {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [loadingProfile, setLoadingProfile] = useState(true);
 
   useEffect(() => {
     loadProfile();
   }, []);
 
   const loadProfile = async () => {
+    setLoadingProfile(true);
     try {
       const response = await api.get("/profile");
       setProfile(response.data);
     } catch {
       console.error("Erro ao carregar perfil");
+      setMessage("Não foi possível carregar os dados do perfil. Tente novamente.");
+    } finally {
+      setLoadingProfile(false);
     }
   };
 
@@ -102,11 +107,23 @@ export default function Dashboard({ onRefresh }) {
     );
   };
 
+  if (loadingProfile) {
+    return (
+      <div style={{ padding: "40px", background: "#0f172a", minHeight: "100vh", color: "#fff" }}>
+        <div style={styles.header}>
+          <h1>📊 Dashboard de Carreira</h1>
+          <p style={{ color: "#94a3b8" }}>Carregando dados do usuário...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ padding: "40px", background: "#0f172a", minHeight: "100vh", color: "#fff" }}>
       <div style={styles.header}>
         <h1>📊 Dashboard de Carreira</h1>
         <p style={{ color: "#94a3b8" }}>Métricas detalhadas e análise de prontidão de mercado.</p>
+        {profile?.name && <p style={{ color: "#fff", marginTop: "10px" }}>Olá, <strong>{profile.name}</strong> ({profile.email})</p>}
       </div>
 
       {/* Grid Superior: Gauges e Status */}
@@ -132,11 +149,15 @@ export default function Dashboard({ onRefresh }) {
                 {profile?.has_resume ? "Atualizar Currículo" : "Enviar Currículo"}
             </Button>
 
-            {profile?.has_resume && (
+            {profile?.has_resume ? (
               <Button onClick={handleDownload} style={styles.downloadBtn}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight: "8px"}}><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                 Baixar Meu Currículo
               </Button>
+            ) : (
+              <p style={{ marginTop: "12px", color: "#94a3b8", fontSize: "14px" }}>
+                Nenhum currículo disponível. Faça upload para habilitar o download e recomendações.
+              </p>
             )}
 
             {message && (
