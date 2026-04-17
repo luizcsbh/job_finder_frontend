@@ -33,7 +33,7 @@ export default function JobCard({ job, isFavorite, onFavoriteToggle }) {
     Remotive:    "#6366f1",
     ArbeitNow:   "#0891b2",
     "The Muse":  "#db2777",
-    JobIceCream: "#f97316",
+    Jobicy:      "#f97316",
     Jooble:      "#7c3aed",
   };
   const badgeColor = sourceColors[job.source] || "#3b3bb9";
