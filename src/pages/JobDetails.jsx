@@ -1,6 +1,28 @@
 import Button from "../components/Button";
 
 export default function JobDetails({ job, onBack }) {
+  const normalizeText = (value) => {
+    if (value === null || value === undefined) return "";
+    if (typeof value === "string") {
+      try {
+        const parsed = JSON.parse(value);
+        if (typeof parsed !== "string") return normalizeText(parsed);
+        return parsed.replace(/<[^>]*>/g, "").trim();
+      } catch {
+        return value.replace(/<[^>]*>/g, "").trim();
+      }
+    }
+    if (Array.isArray(value)) {
+      return value.map(normalizeText).filter(Boolean).join(", ");
+    }
+    if (typeof value === "object") {
+      if (typeof value.text === "string") return normalizeText(value.text);
+      if (typeof value.html === "string") return normalizeText(value.html);
+      return Object.values(value).map(normalizeText).filter(Boolean).join(" ");
+    }
+    return String(value);
+  };
+
   if (!job) {
     return (
       <div style={styles.container}>
@@ -36,7 +58,7 @@ export default function JobDetails({ job, onBack }) {
           </div>
           <div style={styles.row}>
             <strong>Localização:</strong>
-            <span>{job.location || "Não informado"}</span>
+            <span>{normalizeText(job.location) || "Não informado"}</span>
           </div>
           <div style={styles.row}>
             <strong>Fonte:</strong>
@@ -53,7 +75,7 @@ export default function JobDetails({ job, onBack }) {
           </div>
           <div style={styles.row}>
             <strong>Categoria:</strong>
-            <span>{Array.isArray(job.category) && job.category.length > 0 ? job.category.join(", ") : "Não informado"}</span>
+            <span>{normalizeText(job.category) || "Não informado"}</span>
           </div>
           <div style={styles.row}>
             <strong>Salário:</strong>
@@ -69,7 +91,7 @@ export default function JobDetails({ job, onBack }) {
         <div style={styles.section}>
           <h3 style={styles.sectionTitle}>Descrição da Vaga</h3>
           <div style={styles.description}>
-            <p>{job.description || "Descrição não disponível no momento."}</p>
+            <p>{normalizeText(job.description) || "Descrição não disponível no momento."}</p>
           </div>
         </div>
       </div>
