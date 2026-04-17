@@ -34,7 +34,6 @@ export default function JobCard({ job, isFavorite, onFavoriteToggle }) {
     ArbeitNow:   "#0891b2",
     "The Muse":  "#db2777",
     JobIceCream: "#f97316",
-    Adzuna:      "#16a34a",
     Jooble:      "#7c3aed",
   };
   const badgeColor = sourceColors[job.source] || "#3b3bb9";
