@@ -7,6 +7,7 @@ export default function AdminDashboard() {
   const [apiHealth, setApiHealth] = useState(null);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [tab, setTab] = useState("overview"); // overview, users, apis
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -14,8 +15,7 @@ export default function AdminDashboard() {
     loadAdminData();
   }, []);
 
-  const loadAdminData = async () => {
-    setLoading(true);
+  constRefreshing(true);
     try {
       const [statsRes, healthRes, usersRes] = await Promise.all([
         api.get("/admin/stats"),
@@ -28,6 +28,8 @@ export default function AdminDashboard() {
     } catch (err) {
       console.error("Erro ao carregar dados admin", err);
     } finally {
+      setLoading(false);
+      setRefresh {
       setLoading(false);
     }
   };
@@ -67,7 +69,9 @@ export default function AdminDashboard() {
         <div style={styles.headerContent}>
           <h1 style={styles.title}>🛡️ Painel do Administrador</h1>
           <p style={styles.subtitle}>Gerenciamento centralizado do sistema Job Finder Pro</p>
-        </div>
+        </div>disabled={refreshing} style={styles.refreshBtn}>
+          {refreshing ? "Atualizando..." : "Atualizar Dados"}
+        
         <Button onClick={loadAdminData} style={styles.refreshBtn}>Atualizar Dados</Button>
       </header>
 
