@@ -175,7 +175,7 @@ export default function AdminDashboard() {
                     }} />
                     <div>
                       <span style={styles.apiName}>{api.api_name}</span>
-                      <p style={styles.apiDesc}>Última verificação: {api.last_check ? new Date(api.last_check).toLocaleTimeString() : "N/A"}</p>
+                      <p style={styles.apiDesc}>Última verificação: {api.last_check ? new Date(api.last_check).toLocaleString('pt-BR', {timeZone: 'America/Sao_Paulo'}) : "N/A"}</p>
                     </div>
                   </div>
                   <div style={{ textAlign: "right" }}>
